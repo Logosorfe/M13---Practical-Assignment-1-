@@ -14,12 +14,13 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * Task: View controller tests with MockMvc and @WebMvcTest.
- *
+ * <p>
  * A @Controller returns a view name, not JSON.
  * Use view().name() and model().attribute() instead of jsonPath().
  * Use content().string(containsString(...)) to check rendered HTML.
@@ -35,26 +36,32 @@ class AnimalPageControllerTest {
 
     @Test
     void listAnimals_shouldRenderAnimalsView() throws Exception {
-        // TODO:
-        // 1. Stub animalService.findAll() to return an empty list
-        // 2. GET /animals
-        // 3. Assert status 200 and view name "animals"
+        when(animalService.findAll()).thenReturn(List.of());
+        mockMvc.perform(get("/animals")
+                        .with(user("user").roles("USER")))
+                .andExpect(status().isOk())
+                .andExpect(view().name("animals"));
     }
 
     @Test
     void listAnimals_shouldAddAnimalsToModel() throws Exception {
-        // TODO:
-        // 1. Stub animalService.findAll() to return a list with one animal (name="Rex")
-        // 2. GET /animals
-        // 3. Assert the model has an attribute named "animals" containing that list
+        AnimalResponse rex = new AnimalResponse(1L, "Rex", AnimalType.DOG, "Labrador", 5,
+                "Strong dog", AnimalStatus.AVAILABLE);
+
+        when(animalService.findAll()).thenReturn(List.of(rex));
+        mockMvc.perform(get("/animals")
+                        .with(user("user").roles("USER")))
+                .andExpect(model().attributeExists("animals"));
     }
 
     @Test
     void listAnimals_shouldRenderAnimalNameInHtml() throws Exception {
-        // TODO:
-        // 1. Stub animalService.findAll() to return a list with one animal (name="Rex")
-        // 2. GET /animals
-        // 3. Assert the response body (rendered HTML) contains the string "Rex"
-        //    Hint: content().string(containsString("Rex"))
+        AnimalResponse rex = new AnimalResponse(1L, "Rex", AnimalType.DOG, "Labrador", 5,
+                "Strong dog", AnimalStatus.AVAILABLE);
+
+        when(animalService.findAll()).thenReturn(List.of(rex));
+        mockMvc.perform(get("/animals")
+                        .with(user("user").roles("USER")))
+                .andExpect(content().string(containsString("Rex")));
     }
 }

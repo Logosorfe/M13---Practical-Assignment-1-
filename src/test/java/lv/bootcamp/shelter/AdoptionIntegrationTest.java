@@ -13,13 +13,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
 
-// TODO: add imports as you write the test (e.g. assertThat, verify)
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
+
 
 /**
  * Task: Integration test with @SpringBootTest.
- *
+ * <p>
  * The full application context loads — use @MockitoBean only for the external
  * NotificationClient. Everything else (service, repository, JPA) is real.
+ *
  * @Transactional rolls back after each test.
  */
 @SpringBootTest
@@ -34,12 +37,20 @@ class AdoptionIntegrationTest {
 
     @Test
     void adoptionFlow_shouldPersistStatusAndNotifyExternalSystem() {
-        // TODO:
-        // 1. Create a new animal via animalService.create() — assert status is AVAILABLE
-        // 2. Adopt it via animalService.adopt() with an email address
-        // 3. Assert the returned response has status ADOPTED
-        // 4. Verify notificationClient.sendAdoptionNotification() was called
-        //    with the correct animalId, name, and email
-        // 5. Re-fetch the animal via animalService.findById() and assert it is still ADOPTED
+        AnimalResponse created = animalService.create(new AnimalCreateRequest("Rex", AnimalType.DOG,
+                "Labrador", 5, "Strong dog"));
+
+        assertThat(created.status()).isEqualTo(AnimalStatus.AVAILABLE);
+
+        AnimalResponse adopted = animalService.adopt(new AdoptionRequest(created.id(), null,
+                "john@example.com"));
+
+        assertThat(adopted.status()).isEqualTo(AnimalStatus.ADOPTED);
+        verify(notificationClient).sendAdoptionNotification(adopted.id(), adopted.name(),
+                "john@example.com");
+
+        AnimalResponse reFetched = animalService.findById(adopted.id());
+
+        assertThat(reFetched.status()).isEqualTo(AnimalStatus.ADOPTED);
     }
 }

@@ -85,8 +85,14 @@ src/test/java/lv/bootcamp/shelter/
 ## Teacher's comments
 ``` text
 What should be improved in code quality?
-AnimalServiceTest.create_shouldSaveAnimalWithAvailableStatus: you stub save() to return a separately constructed hardcoded Animal. The response therefore comes from the stub rather than proving that the request was mapped correctly, while the captured entity is checked only for status. Return the repository argument with thenAnswer(returnsFirstArg()) (setting its ID in the answer if needed), then validate all request fields on both the saved entity and returned response.
-AnimalServiceTest.findById_shouldThrowWhenAnimalNotFound: you verify only that the exception message contains "99". Assert the full expected message, such as "Animal not found: 99", so an unrelated message containing the same number cannot pass.
+AnimalServiceTest.create_shouldSaveAnimalWithAvailableStatus: you stub save() to return a separately
+constructed hardcoded Animal. The response therefore comes from the stub rather than proving that the
+request was mapped correctly, while the captured entity is checked only for status. Return the
+repository argument with thenAnswer(returnsFirstArg()) (setting its ID in the answer if needed), then
+validate all request fields on both the saved entity and returned response.
+AnimalServiceTest.findById_shouldThrowWhenAnimalNotFound: you verify only that the exception message
+contains "99". Assert the full expected message, such as "Animal not found: 99", so an unrelated message
+containing the same number cannot pass.
 AnimalPageControllerTest.listAnimals_shouldAddAnimalsToModel: attributeExists("animals") proves only that some value was added under that name. Assert the exact expected list, for example model().attribute("animals", List.of(rex)), so the test catches a controller that places the wrong data in the model.
 AnimalRepositoryTest.findByStatus_shouldReturnOnlyMatchingAnimals asserts only .hasSize(2), so it can pass if two wrong animals are returned. findByType_shouldReturnAnimalsOfGivenType can also pass vacuously when the result is empty because it uses only forEach. Assert the expected names or IDs and the expected size so both tests verify the actual matching entities.
 AnimalControllerSecurityTest: all three mockMvc.perform(...).andExpect(...) chains are compressed onto one line. Break the request and each expectation onto separate lines so the test flow is easy to scan.

@@ -93,10 +93,20 @@ validate all request fields on both the saved entity and returned response.
 AnimalServiceTest.findById_shouldThrowWhenAnimalNotFound: you verify only that the exception message
 contains "99". Assert the full expected message, such as "Animal not found: 99", so an unrelated message
 containing the same number cannot pass.
-AnimalPageControllerTest.listAnimals_shouldAddAnimalsToModel: attributeExists("animals") proves only that some value was added under that name. Assert the exact expected list, for example model().attribute("animals", List.of(rex)), so the test catches a controller that places the wrong data in the model.
-AnimalRepositoryTest.findByStatus_shouldReturnOnlyMatchingAnimals asserts only .hasSize(2), so it can pass if two wrong animals are returned. findByType_shouldReturnAnimalsOfGivenType can also pass vacuously when the result is empty because it uses only forEach. Assert the expected names or IDs and the expected size so both tests verify the actual matching entities.
-AnimalControllerSecurityTest: all three mockMvc.perform(...).andExpect(...) chains are compressed onto one line. Break the request and each expectation onto separate lines so the test flow is easy to scan.
+AnimalPageControllerTest.listAnimals_shouldAddAnimalsToModel: attributeExists("animals") proves only that
+some value was added under that name. Assert the exact expected list, for example
+model().attribute("animals", List.of(rex)), so the test catches a controller that places the wrong data
+in the model.
+AnimalRepositoryTest.findByStatus_shouldReturnOnlyMatchingAnimals asserts only .hasSize(2), so it can pass
+if two wrong animals are returned. findByType_shouldReturnAnimalsOfGivenType can also pass vacuously when
+the result is empty because it uses only forEach. Assert the expected names or IDs and the expected size
+so both tests verify the actual matching entities.
+AnimalControllerSecurityTest: all three mockMvc.perform(...).andExpect(...) chains are compressed onto one
+line. Break the request and each expectation onto separate lines so the test flow is easy to scan.
 
 Non-scored observation
-AdoptionIntegrationTest.adoptionFlow_shouldPersistStatusAndNotifyExternalSystem verifies the notification using adopted.id() and adopted.name(). Those values come from the same operation being tested, so a consistently wrong response and notification could agree. Use the independently known created animal ID and expected name (created.id() and "Rex") as the verification values.
+AdoptionIntegrationTest.adoptionFlow_shouldPersistStatusAndNotifyExternalSystem verifies the notification
+using adopted.id() and adopted.name(). Those values come from the same operation being tested, so a
+consistently wrong response and notification could agree. Use the independently known created animal ID and
+expected name (created.id() and "Rex") as the verification values.
 ```
